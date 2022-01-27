@@ -23,6 +23,13 @@ async function run() {
     const database = client.db("travel-blog");
     const blogCollection = database.collection("blogs");
 
+    //add api
+    app.post("/blogs", async (req, res) => {
+      const product = req.body;
+      const result = await blogCollection.insertOne(product);
+      res.json(result);
+    });
+
     //get products api
     app.get("/blogs", async (req, res) => {
       const cursor = blogCollection.find({});
