@@ -22,6 +22,7 @@ async function run() {
     await client.connect();
     const database = client.db("travel-blog");
     const blogCollection = database.collection("blogs");
+    const usersCollection = database.collection("users");
 
     //add api
     app.post("/blogs", async (req, res) => {
@@ -35,6 +36,23 @@ async function run() {
       const cursor = blogCollection.find({});
       const blogs = await cursor.toArray();
       res.send(blogs);
+    });
+
+    //add user info
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.json(result);
+    });
+
+    //make admin
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      console.log("put", user);
+      const filter = { email: user.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.json(result);
     });
   } finally {
     //  await client.close()
